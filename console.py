@@ -127,7 +127,10 @@ class HBNBCommand(cmd.Cmd):
             for valor in words:
                 if valor not in HBNBCommand.classes:
                     KeyValue = valor.split("=")
+                    if len(KeyValue) == 2:
+                        KeyValue[1] = KeyValue[1].replace('_', ' ')
                     dic_kv[KeyValue[0]] = eval(KeyValue[1])
+
             new_instance = HBNBCommand.classes[words[0]]()
             for k, v in dic_kv.items():
                 setattr(new_instance, k, v)
