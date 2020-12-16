@@ -64,6 +64,6 @@ class FileStorage:
             return
         name_cl = type(obj).__name__
         obs = name_cl + "." + str(obj.id)
-        if obj in self.__objects:
+        if obs in self.__objects:
             del self.__objects[obs]
             self.save()
