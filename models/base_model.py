@@ -11,7 +11,7 @@ Base = declarative_base()
 
 class BaseModel:
     """A base class for all hbnb models"""
-    id = Column("id", String(60), primary_key,
+    id = Column("id", String(60), primary_key=True,
                 nullable=False)
     created_at = Column("created_at", DateTime, nullable=False,
                         default=datetime.utcnow())
@@ -31,6 +31,8 @@ class BaseModel:
             kwargs['created_at'] = datetime.strptime(kwargs['created_at'],
                                                      '%Y-%m-%dT%H:%M:%S.%f')
             del kwargs['__class__']
+            for k, v in kwargs.items():
+                setattr(self, k, v)
             self.__dict__.update(kwargs)
 
     def __str__(self):
@@ -53,8 +55,11 @@ class BaseModel:
                           (str(type(self)).split('.')[-1]).split('\'')[0]})
         dictionary['created_at'] = self.created_at.isoformat()
         dictionary['updated_at'] = self.updated_at.isoformat()
+        if "_sa_instance_state" in dictionary:
+            del dictionary["_sa_instance_state"]
         return dictionary
 
     def delete(self):
-        """delete the current instance from the storage""""
+        """delete the current instance from the storage"""
         del(self)
+        storage.save()
