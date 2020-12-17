@@ -21,33 +21,31 @@ class DBStorage:
 
     def __init__(self):
         """init method"""
-        user = getenv["HBNB_MYSQL_USER"]
-        passw = getenv["HBNB_MYSQL_PWD"]
-        lc = getenv["HBNB_MYSQL_HOST"]
-        db = getenv["HBNB_MYSQL_DB"]
+        user = getenv("HBNB_MYSQL_USER")
+        passw = getenv("HBNB_MYSQL_PWD")
+        lc = getenv("HBNB_MYSQL_HOST")
+        db = getenv("HBNB_MYSQL_DB")
 
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}',
-                                      pool_pre_ping=True
-                                      .format(user, passw, lc, nm_dt))
-        if getenv["HBNB_ENV"] == "test":
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}:3306/{}'
+                                      .format(user, passw, lc, db),
+                                      pool_pre_ping=True)
+        if getenv("HBNB_ENV") == "test":
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
         """query on the current database session"""
         objs = {}
-        if not cls:
+        if cls is None:
             consulta = self.__session.query(User, State, City, Amenity,
-                                            Placey, Review).all()
+                                            Place, Review)
             for obj in consulta:
                 name_cl = type(obj).__name__ + "." + str(obj.id)
                 objs[name_cl] = obj
-            return objs
-
         else:
-            consulta1 = self.__session.query(cls).all()
-        for obj in consulta1:
-            name_cl = type(obj).__name__ + "." + str(obj.id)
-            objs[name_cl] = obj
+            consulta1 = self.__session.query(eval(cls)).all()
+            for obj in consulta1:
+                name_cl = type(obj).__name__ + "." + str(obj.id)
+                objs[name_cl] = obj
         return objs
 
     def new(self, obj):
@@ -68,6 +66,6 @@ class DBStorage:
         """create all tables in the database and
         create the current database session"""
         Base.metadata.create_all(self.__engine)
-        s_factory = sessionmaker(bind=self.__engine, expire_on_commit=True)
+        s_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(s_factory)
         self.__session = Session()
