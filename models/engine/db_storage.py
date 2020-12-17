@@ -68,7 +68,6 @@ class DBStorage:
         """create all tables in the database and
         create the current database session"""
         Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(
-            bind=self.__engine,
-            expire_on_commit=True)
-        self.__session = scoped_session(session_factory)
+        s_factory = sessionmaker(bind=self.__engine, expire_on_commit=True)
+        Session = scoped_session(s_factory)
+        self.__session = Session()
