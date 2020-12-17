@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 from models.base_model import BaseModel, Base
-from os import environ
+from os import getenv
 from models.user import User
 from models.state import State
 from models.city import City
@@ -21,15 +21,15 @@ class DBStorage:
 
     def __init__(self):
         """init method"""
-        user = environ["HBNB_MYSQL_USER"]
-        passw = environ["HBNB_MYSQL_PWD"]
-        lc = environ["HBNB_MYSQL_HOST"]
-        db = environ["HBNB_MYSQL_DB"]
+        user = getenv["HBNB_MYSQL_USER"]
+        passw = getenv["HBNB_MYSQL_PWD"]
+        lc = getenv["HBNB_MYSQL_HOST"]
+        db = getenv["HBNB_MYSQL_DB"]
 
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}',
                                       pool_pre_ping=True
                                       .format(user, passw, lc, nm_dt))
-        if environ["HBNB_ENV"] == "test":
+        if getenv["HBNB_ENV"] == "test":
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
