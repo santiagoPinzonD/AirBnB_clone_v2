@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
+from models.review import Review
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey, Integer, Float
 from sqlalchemy.orm import relationship, backref
@@ -41,13 +42,13 @@ class Place(BaseModel, Base):
 
     else:
         @property
-        def place(self):
+        def reviews(self):
             """getter method place"""
-            _places = []
-            for _id, obj in models.storage.all(Place).items():
+            _review = []
+            for _id, obj in models.storage.all(Review).items():
                 if self.id == obj.place_id:
-                    _places.append(obj)
-            return _places
+                    _review.append(obj)
+            return _review
 
         @property
         def amenities(self):
