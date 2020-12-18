@@ -4,6 +4,7 @@ from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey, Integer, Float
 from sqlalchemy.orm import relationship, backref
 import os
+from sqlalchemy import MetaData, Table
 
 
 class Place(BaseModel, Base):
@@ -23,15 +24,44 @@ class Place(BaseModel, Base):
     longitude = Column(Float, nullable=True)
     amenity_ids = []
 
+    metadata = Base.metadata
+
+    place_amenity = Table('place_amenity', metadata,
+                          Column('place_id', String(60),
+                                 ForeignKey("places.id"),
+                                 primary_key=True, nullable=False),
+                          Column('amenity_id', String(60),
+                                 ForeignKey("amenities.id"),
+                                 primary_key=True, nullable=False))
+
     if os.getenv('HBNB_TYPE_STORAGE') == 'fs':
         @property
         def place(self):
+            """getter method place"""
             _places = []
             for _id, obj in models.storage.all(Place).items():
                 if self.id == obj.place_id:
                     _places.append(obj)
             return _places
 
+        @property
+        def amenities(self):
+            """getter method amenities"""
+            _amenities = []
+            for _id, obj in models.storage.all(Amenity).items():
+                if self.id == obj.place_id:
+                    _amenities.append(obj)
+            return _amenities
+
+        @amenities.setter
+        def amenities(self, value):
+            """setter method"""
+            if type(value) is 'Amenity':
+                self.amenity_ids.append(value.id)
+
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
         reviews = relationship("Review", backref="place",
                                cascade="all, delete")
+        amenities = relationship("Amenity", backref="place",
+                                 cascade="all, delete", viewonly=False,
+                                 secondary="place_amenity")
