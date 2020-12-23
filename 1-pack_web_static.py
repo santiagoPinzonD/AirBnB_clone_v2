@@ -13,7 +13,7 @@ def do_pack():
     path = "versions/web_static_{}.tgz" .format(time)
     var = local("tar -czvf {} web_static/" .format(path))
     if var == 0:
-        print(path)
+        return path
     else:
         return None
 
