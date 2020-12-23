@@ -16,4 +16,3 @@ def do_pack():
         return path
     else:
         return None
-
