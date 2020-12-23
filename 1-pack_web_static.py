@@ -3,7 +3,7 @@
 """
 
 from datetime import datetime
-from fabric.api import run, cd, local
+from fabric.api import *
 
 
 def do_pack():
@@ -12,7 +12,7 @@ def do_pack():
     local("mkdir -p versions")
     path = "versions/web_static_{}.tgz" .format(time)
     var = local("tar -czvf {} web_static/" .format(path))
-    if var == 0:
+    if var.succeeded:
         return path
     else:
         return None

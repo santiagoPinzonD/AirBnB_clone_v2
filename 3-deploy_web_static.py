@@ -14,8 +14,8 @@ def do_pack():
     local("mkdir -p versions")
     path = "versions/web_static_{}.tgz" .format(time)
     var = local("tar -czvf {} web_static/" .format(path))
-    if var == 0:
-        print(path)
+    if var.succeeded:
+        return path
     else:
         return None
 
