@@ -3,10 +3,10 @@
 """
 
 import os
-from fabric.api import run, cd, local, env
+from fabric.api import *
 
 
-env.host = ['35.227.48.225', '34.74.219.148']
+env.hosts = ['35.227.48.225', '34.74.219.148']
 
 
 def do_deploy(archive_path):
