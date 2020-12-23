@@ -1,39 +1,35 @@
 #!/usr/bin/python3
-"""Script that distributes an archive to your web servers
+""" script that generates a .tgz archive
 """
 
-from fabric.api import *
-from os.path import exists
+import os
+from fabric.api import run, cd, local, env
 
-env.hosts = ['35.227.48.225', '34.74.219.148']
+
+env.host = ['35.227.48.225', '34.74.219.148']
 
 
 def do_deploy(archive_path):
-    """Distributes an archive to your web servers
-    """
-
-    if not exists(archive_path):
+    """create function of deploy"""
+    if os.path.exists(archive_path) is False:
         return False
-
     try:
-        file_nametgz = archive_path.split("/")[-1]
-        file_name = file_nametgz.split(".")[0]
-        put(archive_path, "/tmp/{}".format(file_nametgz))
-        run("mkdir -p /data/web_static/releases/{}/".format(file_name))
-        run("tar -xzf /tmp/{} -C\
-            /data/web_static/releases/{}/".format(file_nametgz, file_name))
-
-        run("rm /tmp/{}".format(file_nametgz))
-        run("mv /data/web_static/releases/{}/web_static/*\
-            /data/web_static/releases/{}/".format(file_name, file_name))
-        run("rm -rf /data/web_static/releases/{}/web_static".format(file_name))
-
-        # Deletes the symbolic link?
-        run("rm -rf /data/web_static/current")
-
-        # Creates the symbolic link again
-        run("ln -s /data/web_static/releases/{}/\
-            /data/web_static/current".format(file_name))
+        pathfix = archive_path.split("/")[-1]
+        whithouttgz = pathfix.split(".")[0]
+        path = "/data/web_static/releases"
+        put("{}".format(archive_path), "/tmp/{}".format(pathfix))
+        run("sudo mkdir -p {}/{}/" .format(path, whithouttgz))
+        run("sudo tar -xzf /tmp/{} -C {}/{}/" .format(pathfix,
+                                                      path, whithouttgz))
+        run("sudo rm /tmp/{}".format(pathfix))
+        run("sudo mv {}/{}/web_static/* {}/{}/".format(path,
+                                                       whithouttgz,
+                                                       path, whithouttgz))
+        run("sudo rm -rf {}/{}/web_static" .format(path, whithouttgz))
+        run("sudo rm -rf /data/web_static/current")
+        run("sudo ln -sf {}/{}/ /data/web_static/current" .format(path,
+                                                                  whithouttgz))
+        print("New version deployed!")
         return True
     except Exception:
         return False
