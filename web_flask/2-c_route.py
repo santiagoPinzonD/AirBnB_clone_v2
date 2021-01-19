@@ -18,10 +18,12 @@ def world():
     """this function return other mss"""
     return 'HBNB'
 
+
 @app.route('/c/<text>', strict_slashes=False)
 def variables(text):
     """this function print parameters of the URL"""
     new_string = text.replace("_", " ")
     return 'C {}'.format(new_string)
 
-app.run(host='0.0.0.0')
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)

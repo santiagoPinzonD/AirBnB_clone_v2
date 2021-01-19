@@ -34,4 +34,5 @@ def displayPython(text="is cool"):
     new_string = text.replace("_", " ")
     return 'Python {}'.format(new_string)
 
-app.run(host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
